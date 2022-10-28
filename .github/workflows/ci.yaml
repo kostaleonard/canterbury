@@ -1,0 +1,14 @@
+name: Run linting and tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: olafurpg/setup-scala@v13
+      - name: Run scalafmt
+        run: sbt "scalafmtCheckAll"
+      - name: Run scalafix
+        run: sbt "scalafixAll --check"
+      - name: Test
+        run: sbt -v +test
