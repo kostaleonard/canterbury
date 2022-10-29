@@ -8,8 +8,7 @@ package model.civilization
   *
   * The player must have civilization-specific cards belonging to exactly one
   * civilization, as well as civilization-generic cards. At the least, the
-  * player must have a matching capital and leader, which are by default
-  * civilization-specific.
+  * player must have a capital, which is civilization-specific.
   */
 sealed trait Civilization {
   val name: String
