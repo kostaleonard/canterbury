@@ -17,3 +17,7 @@ sealed trait Civilization {
 case object Rome extends Civilization {
   override val name: String = "Rome"
 }
+
+case object Spain extends Civilization {
+  override val name: String = "Spain"
+}

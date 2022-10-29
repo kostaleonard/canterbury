@@ -29,18 +29,32 @@ object Deck {
       Failure(
         new InvalidDeckException("A deck must have exactly one capital card")
       )
+    else if (getUniqueCivilizations(cards).size != 1)
+      Failure(
+        new InvalidDeckException("A deck must have exactly one civilization")
+      )
     else Success(new Deck(cards))
   }
 
   /** Returns a list of the capital cards from the list of cards.
     *
     * @param cards
-    *   The list of cards to filter.
+    *   The cards to filter.
     */
   private def getCapitalCards(cards: List[Card]): List[CapitalCard] =
     cards.collect { case capitalCard: CapitalCard =>
       capitalCard
     }
+
+  /** Returns the set of unique civilizations represented in the cards.
+    *
+    * @param cards
+    *   The cards to filter.
+    */
+  private def getUniqueCivilizations(cards: List[Card]): Set[Civilization] =
+    cards.collect { case card: CivilizationSpecific =>
+      card.civilization
+    }.toSet
 }
 
 /** A deck of cards.
