@@ -4,6 +4,6 @@ package model.card.building
   *
   * Granaries provide food resources to players.
   */
-object Granary extends BuildingCard {
+case object Granary extends BuildingCard {
   override val name: String = "Granary"
 }

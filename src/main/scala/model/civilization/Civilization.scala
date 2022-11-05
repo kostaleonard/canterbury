@@ -11,13 +11,13 @@ package model.civilization
   * player must have a capital, which is civilization-specific.
   */
 sealed trait Civilization {
-  val name: String
+  val civilizationName: String
 }
 
 case object Rome extends Civilization {
-  override val name: String = "Rome"
+  override val civilizationName: String = "Rome"
 }
 
 case object Spain extends Civilization {
-  override val name: String = "Spain"
+  override val civilizationName: String = "Spain"
 }

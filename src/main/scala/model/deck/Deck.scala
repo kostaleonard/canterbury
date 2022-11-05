@@ -14,37 +14,55 @@ object Deck {
   /** Returns a new Deck containing the given cards.
     *
     * @param cards
-    *   The cards in the deck. There must be exactly DECK_SIZE cards in the
-    *   deck, including exactly one capital card defining the civilization.
+    *   The cards in the deck. There must initially be exactly DECK_SIZE cards
+    *   in the deck, including exactly one capital card defining the
+    *   civilization.
     * @return
     *   A new Deck containing the given cards. Fails if there are not DECK_SIZE
-    *   cards, or if there is not exactly one capital card.
+    *   cards, if there is not exactly one capital card, or if the deck contains
+    *   cards from multiple civilizations.
     */
-  def withCards(cards: List[Card]): Try[Deck] = {
-    if (cards.length != DECK_SIZE)
-      Failure(
-        new InvalidDeckException(s"A deck must have exactly $DECK_SIZE cards")
-      )
-    else if (getCapitalCards(cards).length != 1)
+  def withInitialCards(cards: List[Card]): Try[Deck] = {
+    val partition = cards.partition {
+      case _: CapitalCard => true
+      case _              => false
+    }
+    val capitalCards = partition._1
+    val drawableCards = partition._2
+    if (capitalCards.length != 1)
       Failure(
         new InvalidDeckException("A deck must have exactly one capital card")
       )
-    else if (getUniqueCivilizations(cards).size != 1)
+    else
+      withInitialCardsPartitioned(
+        capitalCards.head.asInstanceOf[CapitalCard],
+        drawableCards
+      )
+  }
+
+  /** Returns a new Deck containing the given cards.
+    *
+    * @param capitalCard
+    *   The capital card.
+    * @param drawableCards
+    *   The cards in the deck that can be drawn; excludes the capital card.
+    * @return
+    *   A new Deck containing the given cards. Fails if there are not DECK_SIZE
+    *   cards or if the deck contains cards from multiple civilizations.
+    */
+  def withInitialCardsPartitioned(
+      capitalCard: CapitalCard,
+      drawableCards: List[Card]
+  ): Try[Deck] =
+    if (drawableCards.length != DECK_SIZE - 1)
+      Failure(
+        new InvalidDeckException(s"A deck must have exactly $DECK_SIZE cards")
+      )
+    else if (getUniqueCivilizations(capitalCard +: drawableCards).size != 1)
       Failure(
         new InvalidDeckException("A deck must have exactly one civilization")
       )
-    else Success(new Deck(cards))
-  }
-
-  /** Returns a list of the capital cards from the list of cards.
-    *
-    * @param cards
-    *   The cards to filter.
-    */
-  private def getCapitalCards(cards: List[Card]): List[CapitalCard] =
-    cards.collect { case capitalCard: CapitalCard =>
-      capitalCard
-    }
+    else Success(new Deck(capitalCard, drawableCards))
 
   /** Returns the set of unique civilizations represented in the cards.
     *
@@ -59,11 +77,33 @@ object Deck {
 
 /** A deck of cards.
   *
-  * @param cards
-  *   The cards in the deck. There must be exactly DECK_SIZE cards in the deck,
-  *   including exactly one capital card defining the civilization.
+  * There must initially be exactly DECK_SIZE cards in the deck, including
+  * exactly one capital card defining the civilization.
+  *
+  * @param capitalCard
+  *   The capital card.
+  * @param drawableCards
+  *   The cards in the deck that can be drawn; excludes the capital card.
   */
-class Deck private (cards: List[Card]) extends CivilizationSpecific {
-  val capitalCard: CapitalCard = Deck.getCapitalCards(cards).head
+class Deck private (capitalCard: CapitalCard, drawableCards: List[Card])
+    extends CivilizationSpecific {
   override val civilization: Civilization = capitalCard.civilization
+
+  /** Returns the top card and a new deck with the top card removed. */
+  def drawCard: (Card, Deck) = (head, new Deck(capitalCard, drawableCards.tail))
+
+  /** Returns the card on top of the deck. */
+  def head: Card = drawableCards.head
+
+  /** Optionally returns the card on top of the deck. */
+  def headOption: Option[Card] = drawableCards.headOption
+
+  /** Returns all cards after the top card. */
+  def tail: List[Card] = drawableCards.tail
+
+  /** Returns true if the deck is empty, false otherwise. */
+  def isEmpty: Boolean = drawableCards.isEmpty
+
+  /** Returns false if the deck is empty, true otherwise. */
+  def nonEmpty: Boolean = !isEmpty
 }
