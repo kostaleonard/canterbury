@@ -1,96 +1,72 @@
 package model.deck
 
-import exceptions.InvalidDeckException
 import model.card.Card
 import model.card.capital.CapitalCard
 import model.civilization.{Civilization, CivilizationSpecific}
-
-import scala.util.{Failure, Success, Try}
+import model.deck.Deck.DECK_SIZE
 
 /** Deck companion object. */
 object Deck {
   val DECK_SIZE = 60
-
-  /** Returns a new Deck containing the given cards.
-    *
-    * @param cards
-    *   The cards in the deck. There must initially be exactly DECK_SIZE cards
-    *   in the deck, including exactly one capital card defining the
-    *   civilization.
-    * @return
-    *   A new Deck containing the given cards. Fails if there are not DECK_SIZE
-    *   cards, if there is not exactly one capital card, or if the deck contains
-    *   cards from multiple civilizations.
-    */
-  def withInitialCards(cards: List[Card]): Try[Deck] = {
-    val partition = cards.partition {
-      case _: CapitalCard => true
-      case _              => false
-    }
-    val capitalCards = partition._1
-    val drawableCards = partition._2
-    if (capitalCards.length != 1)
-      Failure(
-        new InvalidDeckException("A deck must have exactly one capital card")
-      )
-    else
-      withInitialCardsPartitioned(
-        capitalCards.head.asInstanceOf[CapitalCard],
-        drawableCards
-      )
-  }
-
-  /** Returns a new Deck containing the given cards.
-    *
-    * @param capitalCard
-    *   The capital card.
-    * @param drawableCards
-    *   The cards in the deck that can be drawn; excludes the capital card.
-    * @return
-    *   A new Deck containing the given cards. Fails if there are not DECK_SIZE
-    *   cards or if the deck contains cards from multiple civilizations.
-    */
-  def withInitialCardsPartitioned(
-      capitalCard: CapitalCard,
-      drawableCards: List[Card]
-  ): Try[Deck] =
-    if (drawableCards.length != DECK_SIZE - 1)
-      Failure(
-        new InvalidDeckException(s"A deck must have exactly $DECK_SIZE cards")
-      )
-    else if (getUniqueCivilizations(capitalCard +: drawableCards).size != 1)
-      Failure(
-        new InvalidDeckException("A deck must have exactly one civilization")
-      )
-    else Success(new Deck(capitalCard, drawableCards))
-
-  /** Returns the set of unique civilizations represented in the cards.
-    *
-    * @param cards
-    *   The cards to filter.
-    */
-  private def getUniqueCivilizations(cards: List[Card]): Set[Civilization] =
-    cards.collect { case card: CivilizationSpecific =>
-      card.civilization
-    }.toSet
 }
 
 /** A deck of cards.
   *
   * There must initially be exactly DECK_SIZE cards in the deck, including
-  * exactly one capital card defining the civilization.
+  * exactly one capital card defining the civilization. Cards may be
+  * civilization-generic or match the civilization of the capital card.
   *
   * @param capitalCard
   *   The capital card.
   * @param drawableCards
   *   The cards in the deck that can be drawn; excludes the capital card.
   */
-class Deck private (capitalCard: CapitalCard, drawableCards: List[Card])
+case class Deck(capitalCard: CapitalCard, drawableCards: List[Card])
     extends CivilizationSpecific {
   override val civilization: Civilization = capitalCard.civilization
 
+  /** Returns true if the deck is in a valid start game state, false otherwise.
+    *
+    * To be valid in the start game state, a deck must satisfy the following
+    * properties.
+    *   1. It must have exactly DECK_SIZE cards, including the capital card.
+    *   1. There must be exactly one capital card.
+    *   1. All civilization-specific cards in the deck must match the capital
+    *      card's civilization.
+    */
+  def isValidInitialDeck: Boolean =
+    drawableCards.length == DECK_SIZE - 1 && isValidDeck
+
+  /** Returns true if the deck is in a valid state, false otherwise.
+    *
+    * To be valid, a deck must satisfy the following properties.
+    *   1. It must have DECK_SIZE or fewer cards, including the capital card.
+    *   1. There must be exactly one capital card.
+    *   1. All civilization-specific cards in the deck must match the capital
+    *      card's civilization.
+    */
+  def isValidDeck: Boolean =
+    drawableCards.length <= DECK_SIZE - 1 &&
+      drawableCardsContainNoCapitalCards &&
+      drawableCardsMatchCapitalCardCivilization
+
+  /** Returns true if the drawable cards contain no capital cards. */
+  private def drawableCardsContainNoCapitalCards: Boolean =
+    drawableCards.forall {
+      case _: CapitalCard => false
+      case _              => true
+    }
+
+  /** Returns true if the drawable cards match the capital card civilization. */
+  private def drawableCardsMatchCapitalCardCivilization: Boolean =
+    drawableCards.forall {
+      case civilizationSpecific: CivilizationSpecific =>
+        civilizationSpecific.civilization == capitalCard.civilization
+      case _ => true
+    }
+
   /** Returns the top card and a new deck with the top card removed. */
-  def drawCard: (Card, Deck) = (head, new Deck(capitalCard, drawableCards.tail))
+  def drawCard: (Card, Deck) = (head, Deck(capitalCard, drawableCards.tail))
 
   /** Returns the card on top of the deck. */
   def head: Card = drawableCards.head

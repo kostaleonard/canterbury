@@ -10,44 +10,45 @@ import org.scalatest.matchers.should.Matchers
 class DeckSpec extends AnyFlatSpec with Matchers {
 
   "A Deck" should "have the correct civilization" in {
-    val cards = RomeCapital +: List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard)
-    val deck = Deck.withInitialCards(cards)
-    assert(deck.isSuccess)
-    assert(deck.get.civilization == Rome)
+    val deck = Deck(RomeCapital, List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard))
+    assert(deck.isValidInitialDeck)
+    assert(deck.civilization == Rome)
   }
 
-  it should "fail to be constructed when provided the wrong number of cards" in {
-    val cards = List(RomeCapital)
-    val deck = Deck.withInitialCards(cards)
-    assert(deck.isFailure)
+  it should "be an invalid initial deck when it has fewer cards than the limit" in {
+    val deck = Deck(RomeCapital, List.empty)
+    assert(!deck.isValidInitialDeck)
   }
 
-  it should "fail to be constructed when missing a capital card" in {
-    val cards = List.fill(Deck.DECK_SIZE)(TwoFoodCard)
-    val deck = Deck.withInitialCards(cards)
-    assert(deck.isFailure)
+  it should "be a valid (non-initial) deck when it has fewer cards than the limit" in {
+    val deck = Deck(RomeCapital, List.empty)
+    assert(deck.isValidDeck)
   }
 
-  it should "fail to be constructed if it contains multiple capital cards" in {
-    val cards = List(RomeCapital, Madrid) ++ List.fill(Deck.DECK_SIZE - 2)(
-      TwoFoodCard
+  it should "be invalid when it has more cards than the limit" in {
+    val deck = Deck(RomeCapital, List.fill(Deck.DECK_SIZE)(TwoFoodCard))
+    assert(!deck.isValidInitialDeck)
+    assert(!deck.isValidDeck)
+  }
+
+  it should "be invalid when it contains multiple capital cards" in {
+    val deck =
+      Deck(RomeCapital, Madrid +: List.fill(Deck.DECK_SIZE - 2)(TwoFoodCard))
+    assert(!deck.isValidInitialDeck)
+    assert(!deck.isValidDeck)
+  }
+
+  it should "be invalid when it contains cards that don't match the capital's civilization" in {
+    val deck = Deck(
+      RomeCapital,
+      Conquistador +: List.fill(Deck.DECK_SIZE - 2)(TwoFoodCard)
     )
-    val deck = Deck.withInitialCards(cards)
-    assert(deck.isFailure)
-  }
-
-  it should "fail to be constructed if it contains cards that don't match the capital's civilization" in {
-    val cards =
-      List(RomeCapital, Conquistador) ++ List.fill(Deck.DECK_SIZE - 2)(
-        TwoFoodCard
-      )
-    val deck = Deck.withInitialCards(cards)
-    assert(deck.isFailure)
+    assert(!deck.isValidInitialDeck)
+    assert(!deck.isValidDeck)
   }
 
   it should "remove the capital card from the deck so that it can't be drawn" in {
-    val cards = RomeCapital +: List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard)
-    var deck = Deck.withInitialCards(cards).get
+    var deck = Deck(RomeCapital, List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard))
     while (deck.nonEmpty) {
       val tup = deck.drawCard
       val card = tup._1
