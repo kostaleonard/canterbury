@@ -5,7 +5,7 @@ import model.card.capital.CapitalCard
 import model.civilization.{Civilization, CivilizationSpecific}
 import model.deck.Deck.DECK_SIZE
 
-/** Deck companion object. */
+/** A deck of cards. */
 object Deck {
   val DECK_SIZE = 60
 }
