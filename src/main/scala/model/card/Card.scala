@@ -7,4 +7,16 @@ package model.card
   */
 abstract class Card {
   val name: String
+
+  /** Returns the actions that should occur when the card is played.
+    *
+    * Actions are in order. Subclasses may override.
+    */
+  def whenPlayedActions: List[CardAction] = List.empty
+
+  /** Returns the actions that should occur every turn that the card is in play.
+    *
+    * Actions are in order. Subclasses may override.
+    */
+  def everyTurnActions: List[CardAction] = List.empty
 }
