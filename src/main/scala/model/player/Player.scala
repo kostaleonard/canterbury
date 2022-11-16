@@ -3,6 +3,11 @@ package model.player
 import model.deck.Deck
 import model.discardpile.DiscardPile
 
+object Player {
+  val STARTING_FOOD = 3
+  val STARTING_GOLD = 3
+}
+
 /** A player in the game.
   *
   * @param name
@@ -15,7 +20,7 @@ import model.discardpile.DiscardPile
 case class Player(
     name: String,
     deck: Deck,
-    discardPile: DiscardPile,
-    food: Int,
-    gold: Int
+    discardPile: DiscardPile = DiscardPile.empty,
+    food: Int = Player.STARTING_FOOD,
+    gold: Int = Player.STARTING_GOLD
 )
