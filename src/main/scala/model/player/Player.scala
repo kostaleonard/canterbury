@@ -12,4 +12,10 @@ import model.discardpile.DiscardPile
   * @param discardPile
   *   The player's discard pile.
   */
-case class Player(name: String, deck: Deck, discardPile: DiscardPile, food: Int, gold: Int)
+case class Player(
+    name: String,
+    deck: Deck,
+    discardPile: DiscardPile,
+    food: Int,
+    gold: Int
+)
