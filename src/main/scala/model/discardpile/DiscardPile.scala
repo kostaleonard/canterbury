@@ -14,4 +14,11 @@ object DiscardPile {
   * @param cards
   *   The cards in the pile.
   */
-case class DiscardPile(cards: List[Card])
+case class DiscardPile(cards: List[Card]) {
+
+  /** Returns true if there are no cards in the discard pile. */
+  def isEmpty: Boolean = cards.isEmpty
+
+  /** Returns true if there are cards in the discard pile. */
+  def nonEmpty: Boolean = !isEmpty
+}

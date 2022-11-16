@@ -1,3 +1,4 @@
+import controller.Controller
 import model.Model
 import model.board.Board
 import model.card.capital.{Madrid, RomeCapital}
@@ -16,5 +17,6 @@ object Main extends App {
     Deck(Madrid, List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard))
   )
   val model = Model(List(player1, player2), Board.empty, 0)
+  val controller = Controller(model)
   println(model)
 }

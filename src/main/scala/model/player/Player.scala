@@ -3,6 +3,7 @@ package model.player
 import model.deck.Deck
 import model.discardpile.DiscardPile
 
+/** A player in the game. */
 object Player {
   val STARTING_FOOD = 3
   val STARTING_GOLD = 3
