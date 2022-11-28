@@ -10,6 +10,7 @@ import org.scalatest.matchers.should.Matchers
 
 class ModelSpec extends AnyFlatSpec with Matchers {
 
+  /** Returns a model with two players. */
   private def twoPlayerModelFixture: Model = {
     val player1 = Player(
       "Alice",
@@ -35,5 +36,11 @@ class ModelSpec extends AnyFlatSpec with Matchers {
     val model1 = twoPlayerModelFixture
     val model2 = model1.advanceTurn
     assert(model2.turn == model1.turn + 1)
+  }
+
+  it should "apply a card's actions when it is played" in {
+    val model1 = twoPlayerModelFixture
+    //TODO need hand
+    assert(false)
   }
 }

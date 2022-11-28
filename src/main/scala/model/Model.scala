@@ -1,6 +1,7 @@
 package model
 
 import model.board.Board
+import model.card.Card
 import model.player.Player
 
 /** Represents the current state of the game.
@@ -20,4 +21,11 @@ case class Model(players: List[Player], board: Board, turn: Int) {
 
   /** Returns the model advanced one turn. */
   def advanceTurn: Model = copy(turn = turn + 1)
+
+  /** Returns the model after the active player plays the card.
+    *
+    * @param card
+    *   The card to play.
+    */
+  def activePlayerPlayCard(card: Card): Model = ???
 }

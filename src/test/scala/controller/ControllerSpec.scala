@@ -11,6 +11,7 @@ import org.scalatest.matchers.should.Matchers
 
 class ControllerSpec extends AnyFlatSpec with Matchers {
 
+  /** Returns a controller with a two player model. */
   private def twoPlayerControllerFixture: Controller = {
     val player1 = Player(
       "Alice",

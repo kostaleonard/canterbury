@@ -12,7 +12,7 @@ abstract class Card {
     *
     * Actions are in order. Subclasses may override.
     */
-  def whenPlayedActions: List[CardAction] = List.empty
+  def whenPlayedActions: List[CardAction] = List(RemoveThisCardFromHand, DiscardThisCard)
 
   /** Returns the actions that should occur every turn that the card is in play.
     *

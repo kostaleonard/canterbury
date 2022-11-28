@@ -8,6 +8,7 @@ import org.scalatest.matchers.should.Matchers
 
 class PlayerSpec extends AnyFlatSpec with Matchers {
 
+  /** Returns a player with default parameters where applicable. */
   private def defaultPlayerFixture: Player = Player(
     "Alice",
     Deck(RomeCapital, List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard))
