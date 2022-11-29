@@ -14,7 +14,12 @@ class PlayerSpec extends AnyFlatSpec with Matchers {
     Deck(RomeCapital, List.fill(Deck.DECK_SIZE - 1)(TwoFoodCard))
   )
 
-  "A player" should "have an empty discard pile by default" in {
+  "A player" should "have an empty hand by default" in {
+    val player = defaultPlayerFixture
+    assert(player.hand.isEmpty)
+  }
+
+  it should "have an empty discard pile by default" in {
     val player = defaultPlayerFixture
     assert(player.discardPile.isEmpty)
   }

@@ -82,4 +82,7 @@ case class Deck(capitalCard: CapitalCard, drawableCards: List[Card])
 
   /** Returns false if the deck is empty, true otherwise. */
   def nonEmpty: Boolean = !isEmpty
+
+  /** Returns the number of drawable cards in the deck. */
+  def numDrawableCards: Int = drawableCards.length
 }

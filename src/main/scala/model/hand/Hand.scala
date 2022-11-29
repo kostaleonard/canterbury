@@ -23,4 +23,7 @@ case class Hand(cards: List[Card]) {
 
   /** Returns true if there are cards in the hand. */
   def nonEmpty: Boolean = !isEmpty
+
+  /** Returns the number of cards in the hand. */
+  def size: Int = cards.length
 }

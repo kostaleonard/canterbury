@@ -22,6 +22,13 @@ case class Model(players: List[Player], board: Board, turn: Int) {
   /** Returns the model advanced one turn. */
   def advanceTurn: Model = copy(turn = turn + 1)
 
+  /** Returns the model after drawing all players' initial hands.
+    *
+    * @param numCards
+    *   The number of cards each player should draw from their decks.
+    */
+  def drawInitialHands(numCards: Int): Model = ???
+
   /** Returns the model after the active player plays the card.
     *
     * @param card

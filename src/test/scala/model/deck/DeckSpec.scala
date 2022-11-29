@@ -56,4 +56,11 @@ class DeckSpec extends AnyFlatSpec with Matchers {
       deck = tup._2
     }
   }
+
+  it should "know how many drawable cards it contains" in {
+    val deck1 = Deck(RomeCapital, List.empty)
+    assert(deck1.numDrawableCards == 0)
+    val deck2 = Deck(RomeCapital, List(Conquistador, Conquistador))
+    assert(deck2.numDrawableCards == 2)
+  }
 }

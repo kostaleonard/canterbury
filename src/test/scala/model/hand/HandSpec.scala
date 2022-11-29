@@ -15,4 +15,11 @@ class HandSpec extends AnyFlatSpec with Matchers {
     val hand = Hand(List(Granary))
     assert(hand.nonEmpty)
   }
+
+  it should "know how many cards it contains" in {
+    val hand1 = Hand.empty
+    assert(hand1.size == 0)
+    val hand2 = Hand(List(Granary, Granary))
+    assert(hand2.size == 2)
+  }
 }

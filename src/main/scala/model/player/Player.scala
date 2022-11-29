@@ -2,6 +2,7 @@ package model.player
 
 import model.deck.Deck
 import model.discardpile.DiscardPile
+import model.hand.Hand
 
 /** A player in the game. */
 object Player {
@@ -21,6 +22,7 @@ object Player {
 case class Player(
     name: String,
     deck: Deck,
+    hand: Hand = Hand.empty,
     discardPile: DiscardPile = DiscardPile.empty,
     food: Int = Player.STARTING_FOOD,
     gold: Int = Player.STARTING_GOLD
