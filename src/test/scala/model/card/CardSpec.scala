@@ -8,8 +8,8 @@ class CardSpec extends AnyFlatSpec with Matchers {
     override val name: String = "Empty"
   }
 
-  "A Card" should "have no default actions when played" in {
-    assert(EmptyCard.whenPlayedActions.isEmpty)
+  "A Card" should "have default actions when played: remove from hand and discard" in {
+    assert(EmptyCard.whenPlayedActions == List(RemoveThisCardFromHand, DiscardThisCard))
   }
 
   it should "have no default actions every turn" in {
